@@ -24,7 +24,7 @@ export default class EscPosEncoder {
      * @return {object}          Return the object, for easy chaining commands
      *
      */
-  text(value: string, wrap: number): EscPosEncoder;
+  text(value: string, wrap?: number): EscPosEncoder;
 
   /**
      * Print a newline
@@ -42,7 +42,7 @@ export default class EscPosEncoder {
      * @return {object}          Return the object, for easy chaining commands
      *
      */
-  line(value: string, wrap: number): EscPosEncoder;
+  line(value: string, wrap?: number): EscPosEncoder;
 
   /**
      * Underline text
@@ -51,7 +51,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  underline(value: boolean | number): EscPosEncoder;
+  underline(value?: boolean | number): EscPosEncoder;
 
   /**
      * Italic text
@@ -60,7 +60,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  italic(value: boolean): EscPosEncoder;
+  italic(value?: boolean): EscPosEncoder;
 
   /**
      * Bold text
@@ -69,7 +69,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  bold(value: boolean): EscPosEncoder;
+  bold(value?: boolean): EscPosEncoder;
   
   /**
      * Change width of text
@@ -179,7 +179,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  qrcode(value: string, model: number, size: number, errorlevel: string): EscPosEncoder;
+  qrcode(value: string, model?: number, size?: number, errorlevel?: string): EscPosEncoder;
 
   /**
      * Image
@@ -207,7 +207,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  cut(value: string): EscPosEncoder;
+  cut(value?: string): EscPosEncoder;
   
   /**
      * Pulse
@@ -218,7 +218,7 @@ export default class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-  pulse(device: number, on: number, off: number): EscPosEncoder;
+  pulse(device?: number, on?: number, off?: number): EscPosEncoder;
 
   /**
      * Add raw printer commands
