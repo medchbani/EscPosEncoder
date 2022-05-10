@@ -9,6 +9,7 @@ const should = chai.should();
 
 describe('EscPosEncoder', function() {
     let encoder = new EscPosEncoder();
+    let rasterEncoder = new EscPosEncoder({ imageMode: 'raster' });
 
     describe('text(hello)', function () {
         let result = encoder.text('hello').encode();
@@ -50,27 +51,11 @@ describe('EscPosEncoder', function() {
         });
     });
 
-    describe('codepage(cp936).text(简体中文) - simplified chinese', function () {
-        let result = encoder.codepage('cp936').text('简体中文').encode();
+    describe('codepage(windows1252).text(héllo) - é -> 233', function () {
+        let result = encoder.codepage('windows1252').text('héllo').encode();
         
-        it('should be [ 27, 116, 255, 28, 38, 188, 242, 204, 229, 214, 208, 206, 196, 28, 46 ]', function () {
-            assert.deepEqual(new Uint8Array([ 27, 116, 255, 28, 38, 188, 242, 204, 229, 214, 208, 206, 196, 28, 46 ]), result);
-        });
-    });
-
-    describe('codepage(win1252).text(héllo) - é -> 233', function () {
-        let result = encoder.codepage('win1252').text('héllo').encode();
-        
-        it('should be [ 27, 116, 71, 104, 233, 108, 108, 111 ]', function () {
-            assert.deepEqual(new Uint8Array([ 27, 116, 71, 104, 233, 108, 108, 111 ]), result);
-        });
-    });
-
-    describe('codepage(utf8).text(héllo)', function () {
-        it('should throw an "Codepage not supported by printer" error', function () {
-            expect(function(){
-                let result = encoder.codepage('utf8').text('héllo').encode();
-            }).to.throw('Codepage not supported by printer');
+        it('should be [ 27, 116, 16, 104, 233, 108, 108, 111 ]', function () {
+            assert.deepEqual(new Uint8Array([ 27, 116, 16, 104, 233, 108, 108, 111 ]), result);
         });
     });
 
@@ -122,6 +107,38 @@ describe('EscPosEncoder', function() {
         });
     });
 
+    describe('invert().text(hello).invert()', function () {
+        let result = encoder.invert().text('hello').invert().encode();
+        
+        it('should be [ 29, 66, 1, ..., 29, 66, 0 ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 66, 1, 104, 101, 108, 108, 111, 29, 66, 0 ]), result);
+        });
+    });
+
+    describe('width(2).text(hello).width(1)', function () {
+        let result = encoder.width(2).text('hello').width(1).encode();
+        
+        it('should be [ 29, 33, 16, ..., 29, 33, 0 ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 16, 104, 101, 108, 108, 111, 29, 33, 0 ]), result);
+        });
+    });
+
+    describe('height(2).text(hello).height(1)', function () {
+        let result = encoder.height(2).text('hello').height(1).encode();
+        
+        it('should be [ 29, 33, 1, ..., 29, 33, 0 ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 1, 104, 101, 108, 108, 111, 29, 33, 0 ]), result);
+        });
+    });
+
+    describe('width(2).height(2).text(hello).width(1).height(1)', function () {
+        let result = encoder.width(2).height(2).text('hello').width(1).height(1).encode();
+        
+        it('should be [ 29, 33, 16, 29, 33, 17, ..., 29, 33, 1, 29, 33, 0 ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 16, 29, 33, 17, 104, 101, 108, 108, 111, 29, 33, 1, 29, 33, 0 ]), result);
+        });
+    });
+
     describe('align(left).line(hello)', function () {
         let result = encoder.align('left').line('hello').encode();
         
@@ -170,6 +187,51 @@ describe('EscPosEncoder', function() {
         });
     });
 
+    describe('barcode(CODE128, code128, 60)', function () {
+        let result = encoder.barcode('CODE128', 'code128', 60).encode();
+        
+        it('should be [ 29, 104, 60, 29, 119, 3, 29, 107, 73, ... ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 104, 60, 29, 119, 3, 29, 107, 73, 9, 123, 66, 67, 79, 68, 69, 49, 50, 56 ]), result);
+        });
+    });
+
+    describe('barcode({ACODE128, code128, 60)', function () {
+        let result = encoder.barcode('{ACODE128', 'code128', 60).encode();
+        
+        it('should be [ 29, 104, 60, 29, 119, 3, 29, 107, 73, ... ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 104, 60, 29, 119, 3, 29, 107, 73, 9, 123, 65, 67, 79, 68, 69, 49, 50, 56 ]), result);
+        });
+    });
+
+    describe('barcode({BCODE128, code128, 60)', function () {
+        let result = encoder.barcode('{BCODE128', 'code128', 60).encode();
+        
+        it('should be [ 29, 104, 60, 29, 119, 3, 29, 107, 73, ... ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 104, 60, 29, 119, 3, 29, 107, 73, 9, 123, 66, 67, 79, 68, 69, 49, 50, 56 ]), result);
+        });
+    });
+
+    describe('barcode({C2Uc#, code128, 60)', function () {
+        let result = encoder.barcode('{C2Uc#', 'code128', 60).encode();
+        
+        it('should be [ 29, 104, 60, 29, 119, 3, 29, 107, 73, ... ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 104, 60, 29, 119, 3, 29, 107, 73, 6, 123, 67, 50, 85, 99, 35 ]), result);
+        });
+    });
+
+    describe('image(canvas, 8, 8) - with a black pixel at 0,0 (legacy)', function () {
+        let canvas = createCanvas(8, 8);
+        let context = canvas.getContext('2d');
+        context.fillStyle = 'rgba(0, 0, 0, 1)';
+        context.fillRect( 0, 0, 1, 1 );
+
+        let result = rasterEncoder.image(canvas, 8, 8).encode();
+                
+        it('should be [ 29, 118, 48, 0, 1, 0, 8, 0, 128, 0, 0, 0, 0, 0, 0, 0 ]', function () {
+            assert.deepEqual(new Uint8Array([ 29, 118, 48, 0, 1, 0, 8, 0, 128, 0, 0, 0, 0, 0, 0, 0 ]), result);
+        });
+    });
+
     describe('image(canvas, 8, 8) - with a black pixel at 0,0', function () {
         let canvas = createCanvas(8, 8);
         let context = canvas.getContext('2d');
@@ -178,8 +240,16 @@ describe('EscPosEncoder', function() {
 
         let result = encoder.image(canvas, 8, 8).encode();
                 
-        it('should be [ 29, 118, 48, 0, 1, 0, 8, 0, 128, 0, 0, 0, 0, 0, 0, 0 ]', function () {
-            assert.deepEqual(new Uint8Array([ 29, 118, 48, 0, 1, 0, 8, 0, 128, 0, 0, 0, 0, 0, 0, 0 ]), result);
+        it('should be [ 27, 51, 36, 27, 42, 33, 8, 0, 128, 0, 0, 0, 0, ... ]', function () {
+            assert.deepEqual(new Uint8Array([27, 51, 36, 27, 42, 33, 8, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 27, 50]), result);
+        });
+    });
+
+    describe('pulse()', function () {
+        let result = encoder.pulse().encode();
+        
+        it('should be [ 27, 112, 0, 50, 250 ]', function () {
+            assert.deepEqual(new Uint8Array([ 27, 112, 0, 50, 250 ]), result);
         });
     });
 
@@ -215,19 +285,11 @@ describe('EscPosEncoder', function() {
         });
     });
 
-    describe('beeper()', function () {
-        let result = encoder.beeper().encode();
+    describe('codepage(auto).text(héψжł)', function () {
+        let result = encoder.codepage('auto').text('héψжł').encode();
         
-        it('should be [ 27, 66, 5, 1 ]', function () {
-            assert.deepEqual(new Uint8Array([ 27, 66, 5, 1 ]), result);
-        });
-    });
-
-    describe('openCashDrawer()', function () {
-        let result = encoder.openCashDrawer().encode();
-        
-        it('should be [ 27, 112, 0 ]', function () {
-            assert.deepEqual(new Uint8Array([ 27, 112, 0 ]), result);
+        it('should be [27, 116, 0, 104, 130, 27, 116, 38, 246, 27, 116, 34, 233, 27, 116, 18, 136]', function () {
+            assert.deepEqual(new Uint8Array([27, 116, 0, 104, 130, 27, 116, 38, 246, 27, 116, 34, 233, 27, 116, 18, 136]), result);
         });
     });
 });
