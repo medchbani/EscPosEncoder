@@ -44,6 +44,8 @@ const codepageMappings = {
     'windows1257': 0x33,
     'windows1258': 0x34,
     'rk1048': 0x35,
+    'OEM864': 0x3f,
+		'OEM720': 0x5d,
   },
 
   zjiang: {
@@ -90,6 +92,8 @@ const codepageMappings = {
     'cp720': 0x5d,
     'windows1258': 0x5e,
     'cp775': 0x5f,
+    'OEM864': 0x3f,
+		'OEM720': 0x5d,
   },
 
   bixolon: {
@@ -101,6 +105,8 @@ const codepageMappings = {
     'cp865': 0x05,
     'cp851': 0x0b,
     'cp858': 0x13,
+    'OEM864': 0x3f,
+		'OEM720': 0x5d,
   },
 
   star: {
@@ -114,6 +120,8 @@ const codepageMappings = {
     'cp866': 0x11,
     'cp852': 0x12,
     'cp858': 0x13,
+    'OEM864': 0x3f,
+		'OEM720': 0x5d,
   },
 
   legacy: {
@@ -149,6 +157,8 @@ const codepageMappings = {
     'windows1256': 0x5c,
     'windows1257': 0x19,
     'windows1258': 0x5e,
+    'OEM864': 0x3f,
+		'OEM720': 0x5d,
   },
 };
 
